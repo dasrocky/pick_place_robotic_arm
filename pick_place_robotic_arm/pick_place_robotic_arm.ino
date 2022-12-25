@@ -8,9 +8,9 @@
 #include <Adafruit_PWMServoDriver.h>
 
 // Pinouts
-const int in1 = 2;
-const int in2 = 10;
-const int en1 = 3;
+const int input1MotorDriver = 2;
+const int input2MotorDriver = 10;
+const int enable1MotorDriver = 3;
 
 const int trig = 5;
 const int echo = 4;
@@ -57,8 +57,8 @@ void setup()
 {
 	Serial.begin(9600);
 
-	pinMode(in1, OUTPUT);
-	pinMode(in2, OUTPUT);
+	pinMode(input1MotorDriver, OUTPUT);
+	pinMode(input2MotorDriver, OUTPUT);
 	pinMode(s0, OUTPUT);
 	pinMode(s1, OUTPUT);
 	pinMode(s2, OUTPUT);
@@ -75,7 +75,7 @@ void setup()
 	pwm.setPWMFreq(60);
 	delay(15);
 	delay(2000);
-	reset_arm();
+	resetArm();
 	delay(t);
 }
 
@@ -85,9 +85,9 @@ void loop()
 	Serial.print("State: "); Serial.println(state); Serial.println();
 	if (state == 1)
 	{
-		digitalWrite(in1, HIGH);
-		digitalWrite(in2, LOW);
-		analogWrite(en1, 120);
+		digitalWrite(input1MotorDriver, HIGH);
+		digitalWrite(input2MotorDriver, LOW);
+		analogWrite(enable1MotorDriver, 120);
 	}
 	digitalWrite(trig, LOW);
 	delayMicroseconds(2);
@@ -100,49 +100,49 @@ void loop()
 	delay(100);
 	if (cm <= 4)
 	{
-		analogWrite(en1, 0);
+		analogWrite(enable1MotorDriver, 0);
 		delay(100);
 		cs_stat = clrsensor();
-		analogWrite(en1, 120);
+		analogWrite(enable1MotorDriver, 120);
 		delay(900);     // Delay for Box
-		analogWrite(en1, 0);
+		analogWrite(enable1MotorDriver, 0);
 		delay(500);
 		state = 0;
 
 		if (cs_stat == 1)
 		{
 			// Initializing Red Sequences
-			down_pick();
+			downPick();
 			delay(t);
-			up_pick();
+			upPick();
 			delay(t);
-			rot_cw_c();
+			rotateClockwiseRed();
 			delay(t);
-			down_drop_red();
+			downDropRed();
 			delay(t);
-			up_drop_red();
+			upDropRed();
 			delay(t);
-			rot_ccw();
+			rotateCounterClockwise();
 			delay(t);
-			reset_arm();
+			resetArm();
 			delay(t);
 		}
 		if (cs_stat == 2)
 		{
 			// Initializing Blue Sequences
-			down_pick();
+			downPick();
 			delay(t);
-			up_pick();
+			upPick();
 			delay(t);
 			rot_cw();
 			delay(t);
-			down_drop();
+			downDropBlue();
 			delay(t);
-			up_drop();
+			upDropBlue();
 			delay(t);
-			rot_ccw();
+			rotateCounterClockwise();
 			delay(t);
-			reset_arm();
+			resetArm();
 			delay(t);
 		}
 	}
@@ -184,7 +184,7 @@ int clrsensor()
 }
 
 // Robotic_Arm
-void reset_arm()
+void resetArm()
 {
 	Serial.println("Reset Function");
 	if (ex_state == 1)
@@ -204,7 +204,7 @@ void reset_arm()
 	delay(d);
 	Serial.println("Exit reset");
 }
-void down_pick()
+void downPick()
 {
 	Serial.println("Down_p fucntion");
 	// Rotating base moved to picking position
@@ -238,7 +238,7 @@ void down_pick()
 	}
 	Serial.println("Exit down_p");
 }
-void up_pick()
+void upPick()
 {
 	Serial.println("Up_pick function");
 	// Claw
@@ -275,7 +275,7 @@ void rot_cw()
 	}
 	Serial.println("Exit CW");
 }
-void rot_ccw()
+void rotateCounterClockwise()
 {
 	Serial.println("Rotate CCW");
 	for (pulselen = sp0ccw; pulselen <= sp0cw; pulselen++)
@@ -286,7 +286,7 @@ void rot_ccw()
 	}
 	Serial.println("Exit CCW");
 }
-void down_drop()
+void downDropBlue()
 {
 	Serial.println("Down_drop");
 	// Shoulder
@@ -312,7 +312,7 @@ void down_drop()
 	}
 	Serial.println("Exit down_d");
 }
-void up_drop()
+void upDropBlue()
 {
 	Serial.println("up_d");
 	// Shoulder
@@ -338,7 +338,7 @@ void up_drop()
 	}
 	Serial.println("Exit up_d");
 }
-void rot_cw_c()
+void rotateClockwiseRed()
 {
 	Serial.println("rot_cw for red");
 	for (pulselen = sp0cw; pulselen >= sp0ccw_r; pulselen--)
@@ -349,7 +349,7 @@ void rot_cw_c()
 	}
 	Serial.println("Exit CW for red");
 }
-void down_drop_red()
+void downDropRed()
 {
 	Serial.println("Down_drop");
 	// Shoulder
@@ -375,7 +375,7 @@ void down_drop_red()
 	}
 	Serial.println("Exit down_d");
 }
-void up_drop_red()
+void upDropRed()
 {
 	Serial.println("up_d");
 	// Shoulder
